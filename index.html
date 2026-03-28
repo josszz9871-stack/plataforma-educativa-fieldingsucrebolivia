@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -306,7 +305,6 @@
 </head>
 <body>
 <div id="install-banner" style="display:none; width: 92%; max-width: 450px; margin: 15px auto; padding: 20px; background: linear-gradient(135deg, #1f5e3b, #2e8b57); color: white; border-radius: 20px; text-align: center; box-shadow: 0 12px 24px rgba(0,0,0,0.3); position: relative; z-index: 10000; font-family: sans-serif;">
-    <button onclick="document.getElementById('install-banner').style.display='none'" style="position:absolute; top:10px; right:15px; background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✖</button>
     <div style="font-size: 40px; margin-bottom: 10px;">🏫</div>
     <h3 style="margin: 0 0 10px 0; font-size: 1.2rem;">Plataforma Colegio Fielding</h3>
     <p style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 15px;">Instala la app para ver tus tareas y recibir notificaciones.</p>
@@ -329,13 +327,12 @@
         <div id="login-selector">
             <button class="btn-action" onclick="showLoginForm('profesor')">Acceso Administrativo</button>
             <button class="btn-action" style="background: var(--verde-medio); color: white; border-color: var(--verde-medio);" onclick="showLoginForm('estudiante')">Consulta Familiar</button>
-            <button id="btn-show-install" class="btn-action" style="display:none; background: transparent; border: 1.5px dashed var(--verde-oliva); color: var(--verde-oscuro); margin-top: 15px;" onclick="mostrarBannerPWA()">📲 Instalar App Escolar</button>
         </div>
         
         <div id="form-profesor" class="hidden">
             <h3>Gestión Interna</h3>
-            <input type="text" id="staff_id" name="fielding_staff_id" placeholder="Identificador de Personal">
-            <input type="text" id="staff_pin" name="fielding_staff_pin" placeholder="PIN de Validación" style="-webkit-text-security: disc;">
+            <input type="text" id="staff_id" name="fielding_staff_id" placeholder="ID de Personal" autocomplete="off">
+            <input type="text" id="staff_code" name="fielding_staff_code" placeholder="Código de Validación" style="-webkit-text-security: disc;" autocomplete="off">
             <div style="font-size: 10px; color: #666; margin: 10px 0; text-align: center; background: #f4f4f4; padding: 5px; border-radius: 4px;">
                 Portal Administrativo <strong>Colegio Fielding</strong>. Uso restringido bajo la Ley de Protección de Datos Bolivia 2026.
             </div>
@@ -345,8 +342,8 @@
 
         <div id="form-estudiante" class="hidden">
             <h3>Portal de Consulta</h3>
-            <input type="text" id="student_id" name="fielding_student_code" placeholder="Identificador del Estudiante">
-            <input type="text" id="family_pin" name="fielding_family_key" placeholder="PIN de Registro Familiar" style="-webkit-text-security: disc;">
+            <input type="text" id="student_id" name="fielding_student_code" placeholder="Nombre del Estudiante" autocomplete="off">
+            <input type="text" id="family_code" name="fielding_family_key" placeholder="Código de Registro Familiar" style="-webkit-text-security: disc;" autocomplete="off">
             <div style="font-size: 10px; color: #666; margin: 10px 0; text-align: center; background: #f4f4f4; padding: 5px; border-radius: 4px;">
                 Este es un servicio oficial del <strong>Colegio Fielding</strong>. Al acceder, acepta nuestra Política de Privacidad Estudiantil 2026.
             </div>
@@ -354,9 +351,8 @@
             <p onclick="resetLogin()" style="cursor:pointer; font-size: 0.9rem; margin-top:15px; color: var(--verde-oliva); font-weight:bold;">← Volver</p>
         </div>
         
-        <div style="margin-top: 20px; font-size: 0.75rem; color: #888; border-top: 1px solid #eee; padding-top: 10px;">
-            <p style="margin-bottom: 5px;">Sucre, Bolivia | © 2026 Colegio Fielding</p>
-            <a href="#" style="color:var(--verde-oscuro); text-decoration:none; font-weight:bold;">Política de Privacidad y Uso de Datos</a>
+        <div style="margin-top: 20px; font-size: 0.7rem; color: #888; border-top: 1px solid #eee; padding-top: 10px;">
+            <p>© 2026 Colegio Fielding - Sistema de Uso Interno Reservado.</p>
         </div>
     </div>
 </section>
@@ -375,7 +371,7 @@
 </div>
 
 <script>
-    let profesores = [ { id: 1, nombre: "Admin", apellidos: "General", whatsapp: "", usuario: "admin", pin: "159753" } ];
+    let profesores = [ { id: 1, nombre: "Admin", apellidos: "General", whatsapp: "", usuario: "admin", pass: "159753" } ];
     let materias = [];
     let estudiantes = [];
     let eventos = [];
@@ -402,14 +398,14 @@
     function login(role) {
         if(role === 'profesor') {
             const u = document.getElementById('staff_id').value;
-            const p = document.getElementById('staff_pin').value;
-            const prof = profesores.find(x => x.usuario === u && x.pin === p);
+            const p = document.getElementById('staff_code').value;
+            const prof = profesores.find(x => x.usuario === u && x.pass === p);
             if(prof) { currentRole = 'profesor'; currentUser = prof; initPanel(); }
             else alert("Credenciales incorrectas.");
         } else {
             const u = document.getElementById('student_id').value;
-            const p = document.getElementById('family_pin').value;
-            const est = estudiantes.find(e => e.nombre === u && e.pin === p);
+            const p = document.getElementById('family_code').value;
+            const est = estudiantes.find(e => e.nombre === u && e.pass === p);
             if(est) { currentRole = 'estudiante'; currentUser = est; initPanel(); }
             else alert("Datos incorrectos.");
         }
@@ -786,12 +782,12 @@
                 <h4 style="color:var(--primary);">1. Registro Individual</h4>
                 <label>Nombre completo:</label><input type="text" id="e-nom" placeholder="Apellidos y Nombres" style="width:100%; margin-bottom:10px;">
                 <label>Curso:</label><input type="text" id="e-cur" placeholder="Ej: 3RO SEC" style="width:100%; margin-bottom:10px;">
-                <label>PIN de Registro:</label><input type="text" id="e-ref" placeholder="PIN asignado" style="width:100%; -webkit-text-security: disc;">
+                <label>Código de Registro:</label><input type="text" id="e-ref" placeholder="Código asignado" style="width:100%; -webkit-text-security: disc;">
             </div>
             
             <div class="card" style="border-top: 4px solid var(--accent);">
                 <h4 style="color:var(--accent);">2. Carga Masiva Inteligente</h4>
-                <p style="font-size:0.75rem; color:#666; margin-bottom:8px; background:#fff9c4; padding:5px; border-radius:5px;">Formato: NOMBRE COMPLETO [CURSO] PIN</p>
+                <p style="font-size:0.75rem; color:#666; margin-bottom:8px; background:#fff9c4; padding:5px; border-radius:5px;">Formato: NOMBRE COMPLETO [CURSO] Código</p>
                 <textarea id="e-masivo" placeholder="Ej: JUAN PEREZ 1RO SEC 12345" style="width:100%; height:110px; font-size:0.85rem; border-radius:10px; padding:10px; border:1.5px solid #E0E0E0;"></textarea>
             </div>
         </div>
@@ -814,7 +810,7 @@
                     <th>Nombre y Apellidos</th>
                     <th>Curso</th>
                     <th>Materias Inscritas</th>
-                    <th>PIN</th>
+                    <th>Código</th>
                     <th>Acción</th>
                 </tr>`;
         
@@ -824,14 +820,14 @@
         nombresUnicos.forEach(nom => {
             const registros = misEsts.filter(e => e.nombre === nom);
             const curso = registros[0].curso;
-            const pin = registros[0].pin;
+            const pass = registros[0].pass;
             const matNombres = registros.map(r => materias.find(m => m.id == r.materiaId)?.nombre || "---").join(', ');
 
             html += `<tr>
                 <td><b>${nom}</b></td>
                 <td><span style="background:#eee; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${curso}</span></td>
                 <td><div style="max-width:300px; font-size:0.75rem; color:#555;">${matNombres}</div></td>
-                <td><code>${pin}</code></td>
+                <td><code>${pass}</code></td>
                 <td><button class="btn-del-mini" onclick="delEByName('${nom}')" style="background:#ff4444; color:white; border:none; border-radius:4px; padding:4px 8px; cursor:pointer;">🗑️ Borrar</button></td>
             </tr>`;
         });
@@ -873,7 +869,7 @@
                     const partes = texto.split(regexDiv);
                     
                     const nombreLimpio = partes[0].trim().toUpperCase();
-                    const pinLimpio = partes[partes.length - 1].trim();
+                    const passLimpia = partes[partes.length - 1].trim();
 
                     checks.forEach((cb, cIdx) => {
                         estudiantes.push({
@@ -881,7 +877,7 @@
                             nombre: nombreLimpio, 
                             curso: cursoEncontrado.toUpperCase(), 
                             materiaId: parseInt(cb.value), 
-                            pin: pinLimpio, 
+                            pass: passLimpia, 
                             profesorId: currentUser.id
                         });
                     });
@@ -903,7 +899,7 @@
                     nombre: n.toUpperCase().trim(), 
                     curso: c.toUpperCase().trim(), 
                     materiaId: parseInt(cb.value), 
-                    pin: p.trim(), 
+                    pass: p.trim(), 
                     profesorId: currentUser.id
                 });
             });
@@ -1511,20 +1507,20 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
                 <input type="text" id="adm-nom" placeholder="Nombre completo">
                 <input type="text" id="adm-user" placeholder="Usuario/a">
-                <input type="text" id="adm-pin" placeholder="PIN de acceso" style="-webkit-text-security: disc;">
+                <input type="text" id="adm-ref" placeholder="Código de acceso" style="-webkit-text-security: disc;">
                 <button class="btn-action" onclick="addProf()">Registrar</button>
             </div>
         </div>
         <div class="card" style="padding:0; overflow-x:auto;">
             <table>
                 <tr style="background:var(--verde-oscuro); color:white;">
-                    <th>Nombre</th><th>Usuario</th><th>PIN</th><th>Acción</th>
+                    <th>Nombre</th><th>Usuario</th><th>Código</th><th>Acción</th>
                 </tr>`;
         profesores.forEach(p => {
             html += `<tr>
                 <td><b>${p.nombre}</b></td>
                 <td>${p.usuario}</td>
-                <td><code style="background:#eee; padding:2px 5px; border-radius:4px;">${p.pin}</code></td>
+                <td><code style="background:#eee; padding:2px 5px; border-radius:4px;">${p.pass}</code></td>
                 <td>${p.usuario !== 'admin' ? `<button onclick="delProf(${p.id})" style="background:none; border:none; cursor:pointer;">🗑️</button>` : '🔒'}</td>
             </tr>`;
         });
@@ -1534,9 +1530,9 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
     function addProf() {
         const n = document.getElementById('adm-nom').value;
         const u = document.getElementById('adm-user').value;
-        const p = document.getElementById('adm-pin').value;
+        const p = document.getElementById('adm-ref').value;
         if(n && u && p) { 
-            profesores.push({id:Date.now(), nombre:n, usuario:u, pin:p, whatsapp:""}); 
+            profesores.push({id:Date.now(), nombre:n, usuario:u, pass:p, whatsapp:""}); 
             save(); 
             renderAdminProfesores(); 
         }
@@ -1563,7 +1559,7 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
             <div class="card" style="border-top:4px solid #c0392b;">
                 <h4 style="margin-top:0;">Seguridad de Acceso</h4>
                 <label>ID de Acceso:</label><input type="text" id="p-user-prof" value="${currentUser.usuario}" style="width:100%; margin:8px 0;">
-                <label>Nuevo PIN Personal:</label><input type="text" id="p-pin-prof" value="${currentUser.pin}" style="width:100%; margin:8px 0; -webkit-text-security: disc;">
+                <label>Nuevo Código Personal:</label><input type="text" id="p-ref-prof" value="${currentUser.pass}" style="width:100%; margin:8px 0; -webkit-text-security: disc;">
                 <button class="btn-action" style="width:100%; margin-top:10px; background: #f1c40f !important; color: #1f5e3b !important; font-weight: bold; border: none; padding: 12px; border-radius: 8px; cursor: pointer; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;" onclick="saveSeguridad()">🔑 GUARDAR CREDENCIALES</button>
         </div>`;
     }
@@ -1577,7 +1573,7 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
 
     function saveSeguridad() { 
         currentUser.usuario = document.getElementById('p-user-prof').value; 
-        currentUser.pin = document.getElementById('p-pin-prof').value; 
+        currentUser.pass = document.getElementById('p-ref-prof').value; 
         save(); 
         alert("Credenciales de acceso actualizadas correctamente."); 
     }
@@ -1587,32 +1583,27 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
     const banner = document.getElementById('install-banner');
     const btn = document.getElementById('btn-instalar-app');
     const msgIos = document.getElementById('msg-ios');
-    const btnShowInstall = document.getElementById('btn-show-install');
     let eventoInstalacion;
 
     const esIphone = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const yaInstalado = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+    const yaInstalado = window.navigator.standalone === true;
 
-    // Habilitar el botón manual si es un dispositivo compatible y no está instalada
-    if (!yaInstalado) {
-        if (esIphone) {
-            btnShowInstall.style.display = 'inline-block';
-        }
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            eventoInstalacion = e;
-            btnShowInstall.style.display = 'inline-block';
-            console.log("App lista para instalar manualmente");
-        });
-    }
-
-    window.mostrarBannerPWA = function() {
-        banner.style.display = 'block';
-        if (esIphone) {
+    if (esIphone && !yaInstalado) {
+        setTimeout(() => {
+            banner.style.display = 'block';
             btn.style.display = 'none';
             msgIos.style.display = 'block';
-        }
-    };
+        }, 2500); 
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        eventoInstalacion = e;
+        setTimeout(() => {
+            banner.style.display = 'block'; 
+        }, 2500);
+        console.log("App lista para instalar en Android/PC");
+    });
 
     if (btn) {
         btn.addEventListener('click', async () => {
@@ -1629,7 +1620,6 @@ respeto a las normas y reglamento interno de la Unidad Educativa.</p>
 
     window.addEventListener('appinstalled', () => {
         banner.style.display = 'none';
-        btnShowInstall.style.display = 'none';
     });
 })();
 </script>
